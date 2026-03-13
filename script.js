@@ -8,7 +8,7 @@ const CONFIG = {
   MAX_CONCURRENT_UPLOADS: 5,
   COMPRESSION_TIMEOUT: 8000,
   // ⚠️ 重要：改成你的 Worker 網址
-  API_ENDPOINT: 'https://script.google.com/macros/s/AKfycbzFXhDn18hUPAQVVZrUDFbEcDtpK8mX3BmotcRJUpPAbHvbkRh4EikCwp_ODb-iHAPyTg/exec'
+  API_ENDPOINT: 'fire-management-system.chenfengmu8.workers.dev'
 };
 
 // 表單配置
@@ -596,6 +596,7 @@ if (document.readyState === 'loading') {
 }
 
 Object.values(FORM_CONFIGS).forEach(setupFormSubmit);
+
 
 
 
