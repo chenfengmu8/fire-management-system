@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>動火管理系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #449cd6 10%, #ed8d44 100%);
+            min-height: 100vh;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .title-icon { color: #ffeb3b; }
+
+        .sheet-link-btn {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            font-size: 1.5em;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .sheet-link-btn:hover { background: rgba(210, 216, 200, 0.747); }
+
+        .tabs {
+            display: flex;
+            background: rgba(100, 163, 227, 0.371);
+            border-radius: 12px 12px 0 0;
+            padding: 6px 0px 0px 0px;
+            gap: 5px;
+            /* 關鍵：加入顏色屬性 */
+            color: #2565eb; /* 這會將區塊內預設文字設為藍色 */
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 5px;
+            border: none;
+            background: transparent;
+            color: rgb(211, 196, 196);
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            transition: 0.3s;
+            font-size: 0.95em;
+        }
+
+        .tab.active {
+            background: white;
+            color: #288dd1;
+        }
+
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .form-container.active { display: block; }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+            font-size: 0.95em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            font-size: 1em;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #288dd1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(40, 141, 209, 0.1);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* 重點修正：核選方塊容器佈局 */
+        .checkbox-container {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1PX solid #eee;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            justify-content: flex-start; /* 水平靠左 */
+            gap: 12px; /* 勾選框與文字的間距 */
+            cursor: pointer;
+            font-size: 1em;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0; /* 禁止縮小，防止格式跑掉 */
+            cursor: pointer;
+        }
+
+        .photo-upload {
+            border: 2px dashed #bbb;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .photo-upload:hover {
+            border-color: #288dd1;
+            background: #f0f7ff;
+        }
+
+        .photo-label {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .photo-icon {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        button[type="submit"], .search-btn {
+            width: 100%;
+            padding: 15px;
+            background: #288dd1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button[type="submit"]:hover { background: #1c6fa5; }
+
+        .status { margin-top: 10px; font-size: 0.9em; text-align: center; }
+        .loading { display: none; }
+
+        @media (max-width: 480px) {
+            .row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1><i class="fa-solid fa-fire title-icon"></i> 興達動火管理系統</h1>
+        <a href="https://script.google.com/macros/library/d/1Vw-n2h1J65zIFeR3mrq7iO0-LoicZsQH6dx9LwaNM6xhoZgseqzDkM9l/1" target="_blank" class="sheet-link-btn">
+            <i class="fa-solid fa-table"></i> 查看完整資料 (Google Sheet)
+        </a>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('pre')">動火前</button>
+        <button class="tab" onclick="switchTab('during')">動火中</button>
+        <button class="tab" onclick="switchTab('after')">動火後</button>
+        <button class="tab" onclick="switchTab('query')">上傳查詢</button>
+    </div>
+
+    <div id="preContainer" class="form-container active">
+        <form id="preForm">
+            <div class="form-group">
+                <label>公司名稱 *</label>
+                <select id="preCompany" required>
+                    <option value="">請選擇</option>
+                    <option value="鈺發">鈺發</option>
+                    <option value="菲棋">菲棋</option>
+                    <option value="金中聯">金中聯</option>
+                    <option value="履豪">履豪</option>
+                    <option value="宏元力">宏元力</option>
+                    <option value="雅安">雅安</option>
+                    <option value="鈺陞">鈺陞</option>
+                    <option value="愷泰">愷泰</option>
+                    <option value="鴻漢">鴻漢</option>
+                    <option value="廣昇">廣昇</option>
+                    <option value="茂竑">茂竑</option>
+                    <option value="宗帝">宗帝</option>
+                    <option value="長揮">長揮</option>
+                    <option value="憲彬">憲彬</option>
+                    <option value="建展">建展</option>
+                    <option value="三五橡膠">三五橡膠</option>
+                    <option value="羅聖">羅聖</option>
+                    <option value="煌田">煌田</option>
+                    <option value="科祭">科祭</option>
+                    <option value="電力修護處南部分處">電力修護處南部分處</option>
+                    <option value="宗誼工程有限公司">宗誼工程有限公司</option>
+                    <option value="修配組修配課">修配組修配課</option>
+                    <option value="測試">測試</option>
+                    <option value="建運">建運</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>其他公司 (若上方選「其他」)</label>
+                <input type="text" id="preInputCompany">
+            </div>
+            <div class="form-group">
+                <label>工程名稱 *</label>
+                <select id="preProject" required>
+                    <option value="">請先選擇公司</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>其他工程名稱 (若上方選「其他」)</label>
+                <input type="text" id="preInputProject">
+            </div>
+            <div class="form-group">
+                <label>上傳者姓名 *</label>
+                <input type="text" id="preUploader" required placeholder="請輸入姓名">
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>主辦組別 *</label>
+                    <select id="preGroup" required>
+                        <option value="">請選擇</option>
+                        <option value="電氣一組">電氣一組</option>
+                        <option value="鍋爐組">鍋爐組</option>
+                        <option value="儀資一組">儀資一組</option>
+                        <option value="儀資二組">儀資二組</option>
+                        <option value="汽機組">汽機組</option>
+                        <option value="修配組">修配組</option>
+                        <option value="儲運組">儲運組</option>
+                        <option value="環化一組">環化一組</option>
+                        <option value="氣渦組">氣渦組</option>
+                        <option value="熱機組">熱機組</option>
+                        <option value="電氣二組">電氣二組</option>
+                        <option value="儀資三組">儀資三組</option>
+                        <option value="機械組">機械組</option>
+                        <option value="環化二組">環化二組</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>主辦課別 *</label>
+                    <select id="preSection" required>
+                        <option value="">請先選擇組別</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>開始時間 *</label>
+                    <input type="datetime-local" id="preStartTime" required>
+                </div>
+                <div class="form-group">
+                    <label>結束時間 *</label>
+                    <input type="datetime-local" id="preEndTime" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>區域 *</label>
+                <select id="preArea" required>
+                    <option value="">請選擇</option>
+                    <option value="汽力機組">汽力機組</option>
+                    <option value="煤場">煤場</option>
+                    <option value="複循環機組">複循環機組</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>詳細位置 *</label>
+                <input type="text" id="preLocation" required>
+            </div>
+            <div class="form-group">
+                <label>是否為限制區域?</label>
+                <select id="preRestricted" required>
+                    <option value="">請選擇</option>
+                    <option value="是">是</option>
+                    <option value="否">否</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>動火項目 (可複選) *</label>
+                <div id="preItemsContainer" class="checkbox-container">
+                    <label class="checkbox-label">
+                        <input type="checkbox" value="氧乙炔熔接、熔斷作業" name="preItemsCheckbox">
+                        <span>氧乙炔熔接、熔斷作業</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" value="研磨作業" name="preItemsCheckbox">
+                        <span>研磨作業</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" value="電焊作業" name="preItemsCheckbox">
+                        <span>電焊作業</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" value="其他" name="preItemsCheckbox">
+                        <span>其他</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>照片 1: 氣體偵測器照片</label>
+                <div class="photo-upload" onclick="document.getElementById('prePhoto1').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="prePhoto1" accept="image/*" style="display:none" required>
+                    <div class="photo-label">建議大小 < 5MB</div>
+                </div>
+                <div id="prePhoto1Status" class="status"></div>
+            </div>
+            <div class="form-group">
+                <label>照片 2: 防護設備照片</label>
+                <div class="photo-upload" onclick="document.getElementById('prePhoto2').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="prePhoto2" accept="image/*" style="display:none" required>
+                    <div class="photo-label">建議大小 < 5MB</div>
+                </div>
+                <div id="prePhoto2Status" class="status"></div>
+            </div>
+            <button type="submit">送出資料</button>
+            <div id="preLoading" class="loading">處理中....</div>
+            <div id="preMsg" class="status"></div>
+        </form>
+    </div>
+
+    <div id="duringContainer" class="form-container">
+        <form id="duringForm">
+            <div class="form-group">
+                <label>公司名稱 *</label>
+                <select id="duringCompany" required>
+                    <option value="">請選擇</option>
+                    <option value="鈺發">鈺發</option>
+                    <option value="菲棋">菲棋</option>
+                    <option value="金中聯">金中聯</option>
+                    <option value="履豪">履豪</option>
+                    <option value="宏元力">宏元力</option>
+                    <option value="雅安">雅安</option>
+                    <option value="鈺陞">鈺陞</option>
+                    <option value="愷泰">愷泰</option>
+                    <option value="鴻漢">鴻漢</option>
+                    <option value="廣昇">廣昇</option>
+                    <option value="茂竑">茂竑</option>
+                    <option value="宗帝">宗帝</option>
+                    <option value="長揮">長揮</option>
+                    <option value="憲彬">憲彬</option>
+                    <option value="建展">建展</option>
+                    <option value="三五橡膠">三五橡膠</option>
+                    <option value="羅聖">羅聖</option>
+                    <option value="膳森">膳森</option>
+                    <option value="元桀">元桀</option>
+                    <option value="煌田">煌田</option>
+                    <option value="科祭">科祭</option>
+                    <option value="電力修護處南部分處">電力修護處南部分處</option>
+                    <option value="宗誼工程有限公司">宗誼工程有限公司</option>
+                    <option value="修配組修配課">修配組修配課</option>
+                    <option value="測試">測試</option>
+                    <option value="建運">建運</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>工程名稱 *</label>
+                <select id="duringProject" required>
+                    <option value="">請先選擇公司</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>動火地點 (連動今日動火前資料) *</label>
+                <select id="duringLocation" required>
+                    <option value="">請先選擇公司與工程</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>環境經檢視無雜草、殘油等風險，無須鋪設防火毯？</label>
+                <select id="q1" required>
+                    <option value="">請選擇</option>
+                    <option value="是">是</option>
+                    <option value="否">否</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>照片 1: 動火許可證</label>
+                <div class="photo-upload" onclick="document.getElementById('duringPhoto1').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="duringPhoto1" accept="image/*" style="display:none" required>
+                </div>
+                <div id="duringPhoto1Status" class="status"></div>
+            </div>
+            <div class="form-group">
+                <label>照片 2: 現場實際防護作業狀況</label>
+                <div class="photo-upload" onclick="document.getElementById('duringPhoto2').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="duringPhoto2" accept="image/*" style="display:none" required>
+                </div>
+                <div id="duringPhoto2Status" class="status"></div>
+            </div>
+            <button type="submit">送出資料</button>
+            <div id="duringLoading" class="loading">處理中....</div>
+            <div id="duringMsg" class="status"></div>
+        </form>
+    </div>
+
+    <div id="afterContainer" class="form-container">
+        <form id="afterForm">
+            <div class="form-group">
+                <label>公司名稱 *</label>
+                <select id="afterCompany" required>
+                    <option value="">請選擇</option>
+                    <option value="鈺發">鈺發</option>
+                    <option value="菲棋">菲棋</option>
+                    <option value="金中聯">金中聯</option>
+                    <option value="履豪">履豪</option>
+                    <option value="宏元力">宏元力</option>
+                    <option value="雅安">雅安</option>
+                    <option value="鈺陞">鈺陞</option>
+                    <option value="愷泰">愷泰</option>
+                    <option value="鴻漢">鴻漢</option>
+                    <option value="廣昇">廣昇</option>
+                    <option value="茂竑">茂竑</option>
+                    <option value="宗帝">宗帝</option>
+                    <option value="長揮">長揮</option>
+                    <option value="憲彬">憲彬</option>
+                    <option value="建展">建展</option>
+                    <option value="三五橡膠">三五橡膠</option>
+                    <option value="羅聖">羅聖</option>
+                    <option value="膳森">膳森</option>
+                    <option value="元桀">元桀</option>
+                    <option value="煌田">煌田</option>
+                    <option value="科祭">科祭</option>
+                    <option value="電力修護處南部分處">電力修護處南部分處</option>
+                    <option value="宗誼工程有限公司">宗誼工程有限公司</option>
+                    <option value="修配組修配課">修配組修配課</option>
+                    <option value="測試">測試</option>
+                    <option value="建運">建運</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>工程名稱 *</label>
+                <select id="afterProject" required>
+                    <option value="">請先選擇公司</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>動火地點 (連動今日動火前資料) *</label>
+                <select id="afterLocation" required>
+                    <option value="">請先選擇公司與工程</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>作業結束時間 *</label>
+                <input type="datetime-local" id="qTime" required>
+            </div>
+            <div class="form-group">
+                <label>是否確定【已完成環境清理無殘留火星】*</label>
+                <select id="qYesNo" required>
+                    <option value="">請選擇</option>
+                    <option value="是">是</option>
+                    <option value="否">否</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>照片 1: 動火作業自主檢查表</label>
+                <div class="photo-upload" onclick="document.getElementById('afterPhoto1').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="afterPhoto1" accept="image/*" style="display:none" required>
+                </div>
+                <div id="afterPhoto1Status" class="status"></div>
+            </div>
+            <div class="form-group">
+                <label>照片 2: 現場恢復照片</label>
+                <div class="photo-upload" onclick="document.getElementById('afterPhoto2').click()">
+                    <i class="fa-solid fa-camera photo-icon"></i>
+                    <div>點擊上傳照片</div>
+                    <input type="file" id="afterPhoto2" accept="image/*" style="display:none" required>
+                </div>
+                <div id="afterPhoto2Status" class="status"></div>
+            </div>
+            <button type="submit">送出資料</button>
+            <div id="afterLoading" class="loading">處理中....</div>
+            <div id="afterMsg" class="status"></div>
+        </form>
+    </div>
+
+    <div id="queryContainer" class="form-container">
+        <div class="form-group">
+            <label>查詢日期 (若查單一公司近況可不填)</label>
+            <input type="date" id="queryDate">
+        </div>
+        <div class="form-group">
+            <label>公司名稱 (選填，未選則顯示當日所有資料)</label>
+            <select id="queryCompany">
+                <option value="">請選擇</option>
+                <option value="鈺發">鈺發</option>
+                <option value="菲棋">菲棋</option>
+                <option value="金中聯">金中聯</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+        <button type="button" class="search-btn" onclick="searchRecords()">開始查詢</button>
+        <div id="queryLoading" class="loading">查詢中....</div>
+        <div id="queryResults"></div>
+    </div>
+</div>
+
+<script>
+// 切換分頁邏輯
+function switchTab(tabName) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-container').forEach(c => c.classList.remove('active'));
+    
+    // 使用 event.currentTarget 確保點擊到正確的按鈕
+    if (event) {
+        event.currentTarget.classList.add('active');
+    }
+    document.getElementById(tabName + 'Container').classList.add('active');
+}
+</script>
+<script src="script.js"></script>
+</body>
+</html>
